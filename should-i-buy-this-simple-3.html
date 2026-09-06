@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>💰 Should I Buy This?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        :root {
+            --bg: #050719;
+            --card: #0d1228;
+            --purple: #7028ff;
+            --purple2: #9b4dff;
+            --green: #22c55e;
+            --red: #ef4444;
+            --yellow: #fbbf24;
+            --text: #ffffff;
+            --muted: #aeb4c9;
+            --border: rgba(255, 255, 255, .08);
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 15%, rgba(102, 38, 255, .16), transparent 35%), var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* ─── HEADER ─── */
+        .header {
+            text-align: center;
+            padding: 20px 0 10px;
+        }
+
+        .header .icon {
+            font-size: 48px;
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-top: 4px;
+            background: linear-gradient(90deg, #773dff, #ff5f7d, #ffad3d);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: rgba(13, 18, 40, .8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 22px 20px;
+            margin-bottom: 16px;
+            transition: 0.2s;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title span {
+            font-size: 18px;
+        }
+
+        /* ─── INPUTS ─── */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #d0d3df;
+        }
+
+        .input-group .hint {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .input-row .input-group {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(10, 14, 30, .8);
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(112, 40, 255, .2);
+        }
+
+        input::placeholder {
+            color: #555577;
+        }
+
+        select option {
+            background: #0d1228;
+            color: var(--text);
+        }
+
+        /* ─── CHECKBOXES ─── */
+        .checkbox-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            color: #d0d3df;
+        }
+
+        .checkbox-group input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--purple);
+            cursor: pointer;
+        }
+
+        /* ─── SIMPLE RESULT EXTRAS ─── */
+        .clear-result{margin-top:14px;padding:16px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--border);}
+        .clear-result h3{margin:0 0 8px;font-size:16px;}
+        .clear-result p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.55;}
+        .money-left{font-size:22px;font-weight:800;margin-top:5px;}
+        .decision-reasons{margin:12px 0 0;padding-left:20px;color:var(--muted);font-size:13px;line-height:1.7;}
+        .decision-reasons li{margin-bottom:3px;}
+        .tips-grid .tip-card p{line-height:1.55;}
+        @media(max-width:520px){.result-card{padding:18px 14px}.money-left{font-size:20px}}
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+        .clear-result { position: relative; overflow: hidden; }
+
+
+        /* ─── BUTTON ─── */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            border: 0;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #6924ff, #9c43ff);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 30px rgba(112, 40, 255, .3);
+            margin-top: 4px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(112, 40, 255, .45);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(10, 14, 30, .6);
+            color: var(--muted);
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--purple);
+            color: var(--text);
+        }
+
+        /* ─── RESULT ─── */
+        .result {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .verdict {
+            text-align: center;
+            padding: 24px 16px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            border: 2px solid;
+        }
+
+        .verdict .emoji {
+            font-size: 56px;
+            display: block;
+        }
+
+        .verdict .title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        .verdict .sub {
+            font-size: 15px;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        .verdict.yes {
+            border-color: var(--green);
+            background: rgba(34, 197, 94, .08);
+        }
+        .verdict.yes .title {
+            color: var(--green);
+        }
+
+        .verdict.maybe {
+            border-color: var(--yellow);
+            background: rgba(251, 191, 36, .08);
+        }
+        .verdict.maybe .title {
+            color: var(--yellow);
+        }
+
+        .verdict.no {
+            border-color: var(--red);
+            background: rgba(239, 68, 68, .08);
+        }
+        .verdict.no .title {
+            color: var(--red);
+        }
+
+        /* ─── BREAKDOWN ─── */
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .breakdown-item {
+            background: rgba(10, 14, 30, .5);
+            padding: 14px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .breakdown-item .label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .breakdown-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .breakdown-item .value.green {
+            color: var(--green);
+        }
+        .breakdown-item .value.red {
+            color: var(--red);
+        }
+        .breakdown-item .value.yellow {
+            color: var(--yellow);
+        }
+        .breakdown-item .value.purple {
+            color: var(--purple2);
+        }
+
+        /* ─── TIME COST (HIGHLIGHT) ─── */
+        .time-cost {
+            background: linear-gradient(135deg, rgba(112, 40, 255, .12), rgba(255, 95, 125, .08));
+            border: 1px solid rgba(112, 40, 255, .2);
+            border-radius: 14px;
+            padding: 18px 16px;
+            text-align: center;
+            margin: 12px 0;
+        }
+
+        .time-cost .big {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--yellow);
+        }
+
+        .time-cost .label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .time-cost .detail {
+            font-size: 14px;
+            color: #d0d3df;
+            margin-top: 4px;
+        }
+
+        /* ─── SAVINGS PLAN BAR ─── */
+        .savings-bar {
+            margin: 12px 0;
+        }
+
+        .savings-bar .bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .savings-bar .bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.8s ease;
+            background: linear-gradient(90deg, var(--purple), var(--yellow));
+            width: 0%;
+        }
+
+        .savings-bar .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* ─── HOW TO BUY ─── */
+        .how-to-buy {
+            margin-top: 12px;
+        }
+
+        .how-to-buy .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .how-to-buy .step:last-child {
+            border-bottom: 0;
+        }
+
+        .how-to-buy .step .num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--purple);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .how-to-buy .step .text {
+            font-size: 14px;
+            color: #d0d3df;
+        }
+
+        .how-to-buy .step .text strong {
+            color: var(--text);
+        }
+
+        /* ─── HISTORY ─── */
+        .history-list {
+            margin-top: 10px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(10, 14, 30, .4);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .history-item .h-name {
+            font-weight: 600;
+        }
+
+        .history-item .h-price {
+            color: var(--muted);
+        }
+
+        .history-item .h-verdict {
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+        }
+
+        .history-item .h-verdict.yes {
+            background: rgba(34, 197, 94, .15);
+            color: var(--green);
+        }
+        .history-item .h-verdict.maybe {
+            background: rgba(251, 191, 36, .15);
+            color: var(--yellow);
+        }
+        .history-item .h-verdict.no {
+            background: rgba(239, 68, 68, .15);
+            color: var(--red);
+        }
+
+        .history-empty {
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media(max-width:500px) {
+            .breakdown-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .breakdown-item .value {
+                font-size: 17px;
+            }
+            .verdict .title {
+                font-size: 22px;
+            }
+            .time-cost .big {
+                font-size: 26px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+            .card {
+                padding: 16px 14px;
+            }
+            .input-row {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .input-row .input-group {
+                min-width: unset;
+            }
+        }
+
+        @media(max-width:380px) {
+            .breakdown-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .breakdown-item {
+                padding: 10px 8px;
+            }
+            .breakdown-item .value {
+                font-size: 15px;
+            }
+            .checkbox-group {
+                gap: 10px;
+            }
+            .checkbox-group label {
+                font-size: 12px;
+            }
+        }
+
+        /* ─── UTILITY ─── */
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+
+        .text-muted {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* ─── CURRENCY SYMBOL ─── */
+        .currency-symbol {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--purple2);
+        }
+
+        /* ─── PROFESSIONAL POLISH ─── */
+        body {
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(70px);
+            opacity: .22;
+            z-index: -1;
+        }
+
+        body::before {
+            background: #7028ff;
+            top: 15%;
+            left: -180px;
+        }
+
+        body::after {
+            background: #ff5f7d;
+            right: -180px;
+            bottom: 8%;
+        }
+
+        .header {
+            padding-top: 30px;
+            padding-bottom: 24px;
+        }
+
+        .header .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 78px;
+            height: 78px;
+            border: 1px solid rgba(255, 255, 255, .14);
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(112, 40, 255, .32), rgba(255, 95, 125, .18));
+            box-shadow: 0 16px 40px rgba(112, 40, 255, .2);
+        }
+
+        .header h1 {
+            letter-spacing: -.6px;
+        }
+
+        .header p {
+            margin-top: 8px;
+            letter-spacing: .2px;
+        }
+
+        .card {
+            box-shadow: 0 14px 40px rgba(0, 0, 0, .16);
+        }
+
+        .card:hover {
+            border-color: rgba(155, 77, 255, .28);
+        }
+
+        input,
+        select {
+            min-height: 48px;
+        }
+
+        input:hover,
+        select:hover {
+            border-color: rgba(155, 77, 255, .4);
+        }
+
+        .checkbox-group label {
+            padding: 9px 12px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            transition: .2s;
+        }
+
+        .checkbox-group label:hover {
+            background: rgba(112, 40, 255, .1);
+            border-color: rgba(155, 77, 255, .3);
+        }
+
+        .btn-primary {
+            letter-spacing: .2px;
+        }
+
+        .tips-card {
+            margin-top: 22px;
+            background: linear-gradient(145deg, rgba(20, 27, 57, .92), rgba(13, 18, 40, .8));
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .tip {
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .035);
+            border: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .tip-icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .tip strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .tip p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .site-footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            padding: 10px 0 28px;
+            line-height: 1.6;
+        }
+
+        .site-footer strong {
+            color: #d0d3df;
+        }
+
+        @media(max-width:500px) {
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar {
+            width: 4px;
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--purple);
+            border-radius: 99px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <span class="icon">💰</span>
+            <h1>Should I Buy This?</h1>
+            <p>Smart financial decision helper</p>
+        </div>
+
+        <!-- ─── FINANCIAL PROFILE ─── -->
+        <div class="card">
+            <div class="card-title"><span>📊</span> Your Financial Profile</div>
+
+            <div class="input-group">
+                <label>Monthly Salary <span class="hint">(after tax)</span></label>
+                <div style="position:relative;">
+                    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;">₹</span>
+                    <input type="number" id="monthlySalary" placeholder="50,000" style="padding-left:36px;" />
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Working Days / Month</label>
+                    <input type="number" id="workingDays" placeholder="22" value="22" />
+                </div>
+                <div class="input-group">
+                    <label>Working Hours / Day</label>
+                    <input type="number" id="workingHours" placeholder="8" value="8" />
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Monthly Expenses <span class="hint">(rent, food, bills, etc.)</span></label>
+                <div style="position:relative;">
+                    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;">₹</span>
+                    <input type="number" id="monthlyExpenses" placeholder="30,000" style="padding-left:36px;" />
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Current Savings <span class="hint">(money you have saved)</span></label>
+                <div style="position:relative;">
+                    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;">₹</span>
+                    <input type="number" id="currentSavings" placeholder="10,000" style="padding-left:36px;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── ITEM DETAILS ─── -->
+        <div class="card">
+            <div class="card-title"><span>🛒</span> Item Details</div>
+
+            <div class="input-group">
+                <label>Item Name</label>
+                <input type="text" id="itemName" placeholder="e.g. iPhone 15, Laptop, Shoes" />
+            </div>
+
+            <div class="input-group">
+                <label>Item Price</label>
+                <div style="position:relative;">
+                    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;">₹</span>
+                    <input type="number" id="itemPrice" placeholder="5,000" style="padding-left:36px;" />
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Is this a <strong>Need</strong> or a <strong>Want</strong>?</label>
+                <div class="checkbox-group">
+                    <label><input type="radio" name="needWant" value="need" checked /> ✅ Need (essential)</label>
+                    <label><input type="radio" name="needWant" value="want" /> 💭 Want (luxury)</label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>How urgent is this purchase?</label>
+                <div class="checkbox-group">
+                    <label><input type="radio" name="urgency" value="urgent" /> 🔥 Urgent (now)</label>
+                    <label><input type="radio" name="urgency" value="soon" checked /> 📅 Soon (within a month)</label>
+                    <label><input type="radio" name="urgency" value="later" /> ⏳ Later (can wait)</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── ANALYZE BUTTON ─── -->
+        <button class="btn-primary" onclick="analyzePurchase()">🔍 Analyze Purchase</button>
+
+        <!-- ─── RESULT ─── -->
+        <div class="result" id="resultContainer">
+            <div class="verdict" id="verdictBox">
+                <span class="emoji" id="verdictEmoji">🤔</span>
+                <div class="title" id="verdictTitle">Your result will appear here</div>
+                <div class="sub" id="verdictSub">Fill in the details above and tap Analyze Purchase.</div>
+            </div>
+
+            <div class="time-cost">
+                <div class="label">⏱️ Work needed to pay for it</div>
+                <div class="big" id="timeCostDisplay">0 hours</div>
+                <div class="detail" id="timeCostDetail">Based on the income and working hours you entered</div>
+            </div>
+
+            <div class="clear-result">
+                <h3>💰 After buying it</h3>
+                <div class="money-left" id="moneyLeft">₹0</div>
+                <p id="moneyLeftText">This shows how much of your current savings would remain.</p>
+            </div>
+
+            <div class="clear-result">
+                <h3>🧠 Why?</h3>
+                <ul class="decision-reasons" id="decisionReasons">
+                    <li>Your result will be explained here in simple language.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><span>📊</span> Your Numbers</div>
+                <div class="breakdown-grid" id="breakdownGrid">
+                    <div class="breakdown-item"><div class="label">Income / month</div><div class="value purple" id="bIncome">₹0</div></div>
+                    <div class="breakdown-item"><div class="label">Expenses / month</div><div class="value red" id="bExpenses">₹0</div></div>
+                    <div class="breakdown-item"><div class="label">Savings / month</div><div class="value green" id="bSavings">₹0</div></div>
+                    <div class="breakdown-item"><div class="label">Item price</div><div class="value yellow" id="bPrice">₹0</div></div>
+                </div>
+                <div class="clear-result" style="margin-top:12px;">
+                    <h3>📌 In simple words</h3>
+                    <p id="summaryText">Your purchase explanation will appear here.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><span>🛍️</span> If you decide to buy</div>
+                <div class="how-to-buy" id="howToBuy">
+                    <div class="step"><span class="num">1</span><span class="text"><strong>Check the final price</strong> including delivery or extra costs.</span></div>
+                    <div class="step"><span class="num">2</span><span class="text"><strong>Compare prices</strong> from a few trusted sellers.</span></div>
+                    <div class="step"><span class="num">3</span><span class="text"><strong>Check your savings</strong> before paying.</span></div>
+                    <div class="step"><span class="num">4</span><span class="text"><strong>Keep the bill and warranty</strong> after buying.</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex-between">
+                    <div class="card-title" style="margin-bottom:0;"><span>📜</span> Decision History</div>
+                    <button class="btn-secondary" onclick="clearHistory()">Clear</button>
+                </div>
+                <div class="history-list" id="historyList"><div class="history-empty">No decisions yet.</div></div>
+            </div>
+        </div>
+
+        <!-- ─── FINANCIAL TIPS ─── -->
+        <section class="card tips-card" aria-labelledby="tipsTitle">
+            <div class="card-title" id="tipsTitle"><span>💡</span> Smart Money Tips</div>
+            <div class="tips-grid">
+                <article class="tip"><span class="tip-icon">🛟</span><strong>Keep emergency savings</strong><p>Try to keep money aside for unexpected expenses. Do not spend every rupee you have on one purchase.</p></article>
+                <article class="tip"><span class="tip-icon">⏳</span><strong>Wait 24 hours</strong><p>If it is a want, wait one day. If you still want it, compare the price before buying.</p></article>
+                <article class="tip"><span class="tip-icon">📋</span><strong>Know where your money goes</strong><p>Write down your monthly income, important expenses, and savings. It makes buying decisions much easier.</p></article>
+                <article class="tip"><span class="tip-icon">💰</span><strong>Save before spending</strong><p>Put some money into savings first, then use what is left for regular spending and wants.</p></article>
+                <article class="tip"><span class="tip-icon">🧾</span><strong>Check the total cost</strong><p>Delivery, accessories, subscriptions, repairs, and other extras can increase the real price.</p></article>
+                <article class="tip"><span class="tip-icon">🔎</span><strong>Compare before buying</strong><p>Check a few trusted sellers. Look at the final price, warranty, reviews, and return policy.</p></article>
+                <article class="tip"><span class="tip-icon">💳</span><strong>Be careful with EMI</strong><p>Do not look only at the monthly payment. Check the total amount you will pay over the full EMI period.</p></article>
+                <article class="tip"><span class="tip-icon">⭐</span><strong>Need or want?</strong><p>Ask yourself: “Will I actually use this regularly?” A simple question can prevent many impulse purchases.</p></article>
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <strong>Make thoughtful money decisions.</strong><br />
+            This tool is for guidance only, not personal financial advice.
+        </footer>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // MAIN FUNCTION
+        // ============================================================
+
+        function analyzePurchase() {
+            // ─── Get values ───
+            const salary = Math.max(parseFloat(document.getElementById('monthlySalary').value) || 0, 0);
+            const days = Math.max(parseFloat(document.getElementById('workingDays').value) || 22, 1);
+            const hours = Math.max(parseFloat(document.getElementById('workingHours').value) || 8, 1);
+            const expenses = Math.max(parseFloat(document.getElementById('monthlyExpenses').value) || 0, 0);
+            const savings = Math.max(parseFloat(document.getElementById('currentSavings').value) || 0, 0);
+            const itemName = document.getElementById('itemName').value.trim() || 'this item';
+            const price = Math.max(parseFloat(document.getElementById('itemPrice').value) || 0, 0);
+            const needWant = document.querySelector('input[name="needWant"]:checked').value;
+            const urgency = document.querySelector('input[name="urgency"]:checked').value;
+
+            // ─── Calculations ───
+            const monthlySavings = Math.max(salary - expenses, 0);
+            const hourlyRate = salary / days / hours;
+            const timeHours = hourlyRate > 0 ? price / hourlyRate : 0;
+            const timeDays = timeHours / hours;
+            const timeMonths = timeDays / days;
+
+            const savingsRatio = monthlySavings > 0 ? (price / monthlySavings) : Infinity;
+            const savingsPercent = monthlySavings > 0 ? Math.min((price / monthlySavings) * 100, 100) : 100;
+            const canAffordNow = savings >= price;
+
+            // ─── Need/Want factor ───
+            const needFactor = needWant === 'need' ? 0.7 : 1.2;
+            const urgencyFactor = urgency === 'urgent' ? 0.8 : urgency === 'soon' ? 1.0 : 1.3;
+
+            // ─── Verdict logic ───
+            let verdict, emoji, title, sub;
+
+            // Rule 1: Can afford now?
+            if (canAffordNow && price < savings * 0.5) {
+                verdict = 'yes';
+                emoji = '✅';
+                title = 'Buy It Now!';
+                sub = 'You have enough savings and this is a smart purchase.';
+            }
+            // Rule 2: Price < 30% of monthly savings
+            else if (savingsRatio < 0.3 && monthlySavings > 0) {
+                verdict = 'yes';
+                emoji = '✅';
+                title = 'Yes, You Can Buy!';
+                sub = `This costs ${Math.round(savingsRatio * 100)}% of your monthly savings — very reasonable.`;
+            }
+            // Rule 3: Price < 60% of monthly savings and it's a need
+            else if (savingsRatio < 0.6 && needWant === 'need') {
+                verdict = 'yes';
+                emoji = '✅';
+                title = 'Yes, Buy It!';
+                sub = 'It\'s a need and within your budget.';
+            }
+            // Rule 4: Price < 100% of monthly savings and urgency is high
+            else if (savingsRatio < 1 && urgency === 'urgent') {
+                verdict = 'maybe';
+                emoji = '⚠️';
+                title = 'Maybe — Consider Carefully';
+                sub = `It costs ${Math.round(savingsRatio * 100)}% of your monthly savings. Can you wait a bit?`;
+            }
+            // Rule 5: Price > 100% of monthly savings
+            else if (savingsRatio > 1) {
+                verdict = 'no';
+                emoji = '❌';
+                title = 'Don\'t Buy This Yet';
+                sub = `This costs ${Math.round(savingsRatio * 100)}% of your monthly savings. Save up first.`;
+            }
+            // Default
+            else {
+                verdict = 'maybe';
+                emoji = '⚠️';
+                title = 'Think About It';
+                sub = 'This purchase needs more consideration.';
+            }
+
+            // ─── Apply final logic ───
+            if (price <= 0) {
+                verdict = 'no';
+                emoji = '❌';
+                title = 'Enter a Price';
+                sub = 'Please enter the item price.';
+            }
+
+            if (salary <= 0) {
+                verdict = 'no';
+                emoji = '❌';
+                title = 'Enter Your Income';
+                sub = 'Please enter your monthly salary.';
+            }
+
+            // ─── Show result ───
+            document.getElementById('resultContainer').classList.add('show');
+
+            // ─── Verdict ───
+            const verdictBox = document.getElementById('verdictBox');
+            verdictBox.className = `verdict ${verdict}`;
+            document.getElementById('verdictEmoji').textContent = emoji;
+            document.getElementById('verdictTitle').textContent = title;
+            document.getElementById('verdictSub').textContent = sub;
+
+            // ─── Time Cost ───
+            const daysDisplay = timeDays.toFixed(1);
+            const hoursDisplay = timeHours.toFixed(1);
+            const monthsDisplay = timeMonths.toFixed(1);
+
+            let timeString = '';
+            if (timeMonths >= 1) {
+                timeString = `${monthsDisplay} months`;
+                if (timeDays > 0) timeString += ` (${daysDisplay} days)`;
+            } else if (timeDays >= 1) {
+                timeString = `${daysDisplay} days`;
+                if (timeHours > 0) timeString += ` (${hoursDisplay} hours)`;
+            } else {
+                timeString = `${hoursDisplay} hours`;
+            }
+
+            document.getElementById('timeCostDisplay').textContent = timeString;
+            document.getElementById('timeCostDetail').textContent = hourlyRate > 0
+                ? `working at ₹${hourlyRate.toFixed(2)}/hour`
+                : 'Enter a valid monthly salary to calculate this';
+
+            // ─── Breakdown ───
+            document.getElementById('bIncome').textContent = `₹${salary.toLocaleString()}`;
+            document.getElementById('bExpenses').textContent = `₹${expenses.toLocaleString()}`;
+            document.getElementById('bSavings').textContent = `₹${monthlySavings.toLocaleString()}`;
+            document.getElementById('bPrice').textContent = `₹${price.toLocaleString()}`;
+            document.getElementById('bHourly').textContent = `₹${hourlyRate.toFixed(2)} / hour`;
+
+            // ─── Savings Bar ───
+            const savedPercent = price > 0 ? Math.min((savings / price) * 100, 100) : 0;
+            document.getElementById('savingsBar').style.width = `${savedPercent}%`;
+            document.getElementById('savingsTarget').textContent = `₹${price.toLocaleString()}`;
+            document.getElementById('savingsText').textContent =
+                savings >= price ? '✅ Fully saved!' : `${Math.round(savedPercent)}% saved`;
+
+            // ─── Summary ───
+            const summary = document.getElementById('summaryText');
+            if (verdict === 'yes') {
+                summary.innerHTML = `
+                    ✅ <strong>You can buy "${itemName}"</strong> — it costs <strong>${timeString}</strong> of your work time.
+                    ${savings >= price ? 'You already have the savings!' : `Save ₹${(price - savings).toLocaleString()} more.`}
+                    ${needWant === 'need' ? 'This is a need, so it\'s a good investment.' : 'This is a want — make sure you really want it.'}
+                `;
+            } else if (verdict === 'maybe') {
+                summary.innerHTML = `
+                    ⚠️ <strong>Think twice about "${itemName}"</strong> — it costs <strong>${timeString}</strong> of your work time.
+                    ${savingsRatio < 1 ? `It's ${Math.round(savingsRatio * 100)}% of your monthly savings.` : ''}
+                    Consider waiting ${urgency === 'urgent' ? 'a little' : '1-2 months'} to save up.
+                `;
+            } else {
+                summary.innerHTML = `
+                    ❌ <strong>Don't buy "${itemName}" right now</strong> — it costs <strong>${timeString}</strong> of your work time.
+                    ${savingsRatio > 1 ? `That's ${Math.round(savingsRatio * 100)}% of your monthly savings — too much!` : ''}
+                    Save ₹${(price - savings).toLocaleString()} first. Try saving ₹${Math.round(price / 6).toLocaleString()} per month for 6 months.
+                `;
+            }
+
+            // ─── How to Buy ───
+            const monthsNeeded = monthlySavings > 0 ? Math.ceil(price / monthlySavings) : 6;
+            const savePerMonth = monthlySavings > 0 ? Math.min(monthlySavings * 0.3, price) : Math.round(price / 6);
+
+            document.getElementById('hSavings').textContent = `₹${savings.toLocaleString()}`;
+            document.getElementById('hSavePerMonth').textContent = `₹${Math.round(savePerMonth).toLocaleString()}`;
+            document.getElementById('hMonthsNeeded').textContent =
+                savings >= price ? '0' : Math.ceil((price - savings) / Math.max(savePerMonth, 1));
+
+            // ─── Save to history ───
+            const moneyLeft = Math.max(savings - price, 0);
+            document.getElementById('moneyLeft').textContent = `₹${moneyLeft.toLocaleString('en-IN')}`;
+            document.getElementById('moneyLeftText').textContent = moneyLeft > 0
+                ? `You would have ₹${moneyLeft.toLocaleString('en-IN')} of your current savings left.`
+                : 'This purchase would use all of your current savings.';
+
+            const reasons = [];
+            if (needWant === 'need') reasons.push('You marked it as a NEED, so buying it has a stronger reason.');
+            else reasons.push('You marked it as a WANT, so waiting before buying is a good idea.');
+            if (price === 0) reasons.push('Enter the item price to get a useful result.');
+            else if (savings >= price && price <= savings * 0.5) reasons.push('You can pay for it without using more than half of your current savings.');
+            else if (price > savings) reasons.push('The item costs more than your current savings.');
+            else reasons.push('The item would use a noticeable part of your current savings.');
+            if (monthlySavings > 0) reasons.push(`You currently save about ₹${monthlySavings.toLocaleString('en-IN')} per month from the numbers you entered.`);
+            else if (salary > 0) reasons.push('Your expenses leave little or no monthly savings based on the numbers entered.');
+            document.getElementById('decisionReasons').innerHTML = reasons.map(r => `<li>${r}</li>`).join('');
+
+            saveHistory(itemName, price, verdict, timeString);
+
+            // ─── Scroll to result ───
+            document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ============================================================
+        // HISTORY (localStorage)
+        // ============================================================
+
+        function getHistory() {
+            try {
+                const stored = JSON.parse(localStorage.getItem('buyHistory') || '[]');
+                return Array.isArray(stored) ? stored : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveHistory(name, price, verdict, time) {
+            const history = getHistory();
+            history.unshift({
+                name: name || 'Unnamed item',
+                price: price,
+                verdict: verdict,
+                time: time,
+                date: new Date().toLocaleDateString()
+            });
+            if (history.length > 20) history.pop();
+            try {
+                localStorage.setItem('buyHistory', JSON.stringify(history));
+            } catch (error) {
+                // Private browsing or disabled storage should not break analysis.
+            }
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const history = getHistory();
+            const container = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                container.innerHTML = '<div class="history-empty">No decisions yet. Analyze something!</div>';
+                return;
+            }
+
+            container.replaceChildren();
+            history.forEach((h) => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+
+                const name = document.createElement('span');
+                name.className = 'h-name';
+                name.textContent = typeof h.name === 'string' ? h.name : 'Unnamed item';
+
+                const price = Number.isFinite(Number(h.price)) ? Number(h.price) : 0;
+                const priceText = document.createElement('span');
+                priceText.className = 'h-price';
+                priceText.textContent = `₹${price.toLocaleString()} · ${h.time || '—'}`;
+
+                const verdict = ['yes', 'maybe', 'no'].includes(h.verdict) ? h.verdict : 'maybe';
+                const verdictText = document.createElement('span');
+                verdictText.className = `h-verdict ${verdict}`;
+                verdictText.textContent = verdict.toUpperCase();
+
+                item.append(name, priceText, verdictText);
+                container.appendChild(item);
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all decision history?')) {
+                localStorage.removeItem('buyHistory');
+                renderHistory();
+            }
+        }
+
+        // ============================================================
+        // ENTER KEY SUPPORT
+        // ============================================================
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const active = document.activeElement;
+                if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT')) {
+                    analyzePurchase();
+                }
+            }
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+
+        renderHistory();
+
+        console.log('💰 Should I Buy This? loaded!');
+        console.log('Enter your financial details and analyze purchases.');
+    </script>
+
+</body>
+</html>
